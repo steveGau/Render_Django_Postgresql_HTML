@@ -1,0 +1,391 @@
+################################### create django and database without deploying to render 
+######### How the Web Works
+	Web Application: 
+		1. Start URL (.com) (Uniform Resource Locatior)
+			Resources: page, image, video, pdf
+		2. HTTP (Hypertext Transfer Protocol) between CLIENT & SERVER 
+		3. CLIENT (Front-End): CLIENT --> Request  --> SERVER
+			CLIENT DevelopmentTools: REACT, 	ANGULAR, 	VUE
+		4. SERVER (Back-End): SERVER --> Response --> CLIENT
+			SERVER DevelopmentTools: Django, EXPRESS, ASP.NET CORD
+		5. 3.-4. Send Data between CLIENT & SERVER 
+		6. SERVER send Response to CLIENT
+			a. Send HTML (Hypertext Markup Language) to CLIENT
+			b. Send Data CLIENT and CLIENT Create HTML (SERVER can serve more CLIENTs)
+
+######### Setting Up the Development Environment 
+	1. cd C:\Users\a2907\Desktop\pyApp\DeepLearning\Django
+	2. mkdir core
+	3. cd C:\Users\a2907\Desktop\pyApp\DeepLearning\Django\Django_Crash_Course
+	4. pipenv install django
+		Pipfile
+		Pipfile.lock
+	5. pipenv shell
+	6. django-admin
+
+		"Available django subcommands"
+			check
+			compilemessages
+			createcachetable
+			dbshell
+			diffsettings
+			dumpdata
+			flush
+			inspectdb
+			loaddata
+			makemessages
+			makemigrations
+			migrate
+			optimizemigration
+			runserver
+			sendtestemail
+			shell
+			showmigrations
+			sqlflush
+			sqlmigrate
+			sqlsequencereset
+			squashmigrations
+			startapp
+			startproject
+			test
+			testserver
+			
+	7. django-admin startproject core .
+		Pipfile
+		Pipfile.lock
+		manage.py       (wrapper around django admin)
+		core		
+			__init__.py (define this folder is a package)
+			asji.py     (use for the deployment)
+			settings.py (define application setting)
+			urld.py 	(define url as an application)
+			wsgi.py
+			
+	8. python manage.py 		
+		"Available subcommands:"
+			[django]
+				check
+				compilemessages
+				createcachetable
+				...
+				runserver
+	9. cd C:\Users\a2907\Desktop\pyApp\DeepLearning\Django\Django_Crash_Course
+		python manage.py runserver 8000
+	
+######### django project
+	project (core)
+		app ()
+		
+######### Creating Your First App
+	1. edit settings.py
+		delete not used app in INSTALLED_APPS: 'django.contrib.sessions',
+	2. open another terminal,  
+		pipenv shell
+		cd C:\Users\a2907\Desktop\pyApp\DeepLearning\Django\Django_Crash_Course
+		python manage.py startapp blog
+	3. edit settings.py
+		INSTALLED_APPS = ['blog']
+
+######### Writing View
+	1. edit views.py in blog (request --> response)
+		from django.shortcuts import render
+		from .models import Post
+		def home(request):
+			data = Post.objects.all()
+			return render(request, "index.html", {"posts":data})
+	
+######### Mapping URLs to Views		
+	1.a add new file in blog with name urls.py
+		from django.views.generic import TemplateView
+		urlpatterns = [path('', TemplateView.as_view(template_name="home.html"))]
+	or
+	1.b add new file in blog with name urls.py
+		from . import views
+		from django.views.generic import TemplateView
+		urlpatterns = [path('', views.home, name="homepage")]
+		
+	2. edit urls.py in project folder core and add 
+		from django.urls import path, include
+		urlpatterns = [path('', include('blog.urls', namespace="blog"))]
+
+	3. python manage.py runserver 8000
+	   http://127.0.0.1:8000/blog/hello
+	   
+######### Using Templates	
+	1. create a folder "templates" under Django_Crash_Course
+	2. add file home.html in templates folder
+		Hello World
+	3. edit settings.py to define template folder location
+		TEMPLATES = [
+		{
+			'DIRS': [BASE_DIR, 'template'],
+		},]
+	4. edit home.html to pass a varaible with a if condition
+		{% if name %}
+			<h1>Hello {{name}} from dynamic home.html</h1>
+		{% else %}
+			<h1>Hello World from static home.html</h1>
+		{% endif %}
+
+######### download starter-template from https://getbootstrap.com/
+	1. https://getbootstrap.com/
+	2. click Docs
+	3. click download
+		https://getbootstrap.com/docs/5.3/getting-started/download/
+		folder \Django_Crash_Course\bootstrap-5.3.0-alpha1-examples\
+		copy \Django\Django_Crash_Course\bootstrap-5.3.0-alpha1-examples\starter-template\index.html
+	4. get example from https://getbootstrap.com/docs/5.3/examples/
+		left click Album
+		right click, View page source
+		copy from header to the footer
+		paste to index.html inside the body
+		
+		
+######### Make Model
+	1. edit models.py
+		from django.db import models
+		class Post(models.Model):
+			title = models.CharField(max_length=155)
+			content = models.TextField() 
+			slug = models.SlugField(max_length=255)
+			def __str__(self):
+				return self.title	
+
+######### Create a Database
+	1. python manage.py makemigrations
+	2. python manage.py migrate
+
+######### register a model
+	1. edit admin.py in blog folder
+		from django.contrib import admin
+		from . import models
+		admin.site.register(models.Post)
+		
+######### using sqlite3 to open db.sqlite3
+	0. https://cloudinfrastructureservices.co.uk/how-to-install-sqlite-on-windows-10-2016-2019-2022-sqlite3/#:~:text=First%2C%20go%20to%20SQLite's%20official,the%20C%3A%5Csqlite%20directory.
+	1. open a command window
+	2. cd C:\Users\a2907\Desktop\pyApp\DeepLearning\Django\Django_Crash_Course
+	3. sqlite3.exe db.sqlite3
+	4. .tables
+	5. SELECT * FROM blog_post;
+
+######### create a superuser for django database
+	1. cd C:\Users\a2907\Desktop\pyApp\DeepLearning\Django\Django_Crash_Course
+	2. python manage.py createsuperuser
+	3. Username (leave blank to use 'a2907'): a2907
+	4. Email address: a290772@gmail.com
+	5. Password: 3P$
+	6. Authenication and Authorization
+		Groups Add and Change
+		Users Add and Change
+	7. BLOG Posts Add and Change
+		
+######### login django administration and add data in Post
+	1. http://127.0.0.1:8000/admin/login/?next=/admin/
+	2. a2907, 3P$
+		http://127.0.0.1:8000/admin/
+	3. Click Add at Posts
+		http://127.0.0.1:8000/admin/blog/post/
+		Title: Third post
+		Content: I made a new post
+		Slug: Third-post
+		Save
+
+######### Debugging Django Applications in Pycharm
+	1. check how many projects in Pycharm and open a project or create a new project
+		Pycharm/File/Close Project
+		Pycharm/Select Project
+			code: C:\Users\a2907\Desktop\pyApp\music21\code\ is the last project open
+			select a old project
+			create a new project
+	2. Set enviroment for dubugging Django app
+		open manage.py
+		click run/edit configurations
+		name=Django
+		Script path=C:\Users\a2907\Desktop\pyApp\DeepLearning\Django\Django_Crash_Course\manage.py
+		Parameters=runserver 9000
+		Enviroment Variables=PYTHONUNBUFFERED=1
+		Python interpreter=Python 3.9(code)
+		Working Directionary=C:\Users\a2907\Desktop\pyApp\DeepLearning\Django\Django_Crash_Course
+		Check Add content roots to PYTHONPATH
+		Check Add source roots to PYTHONPATH
+	3. to debug, 
+		open manage.py, views.py,.. and set dubug break points
+		click debug icon
+	4. type the URL to lunch blog/hello/	
+		http://127.0.0.1:8000/
+				
+######### Using Django Debug Toolbar
+	1. pip install Django-debug-toolbar
+	2. edit settings.py in ..\Django\Django_Crash_Course\core
+		add 'debug_toolbar' in INSTALLED_APPS
+		add 'debug_toolbar.middleware.DebugToolbarMiddleware' MIDDLEWARE
+		insert INTERNAL_IPS=['127.0.0.1'] anywhere in settings.py
+	3. edit urls.py in ..\Django\Django_Crash_Course\core\
+		add 
+		import debug_toolbar
+		path('__debug__/', include('debug_toolbar.urls')) in urlpatterns
+	4. edit home.html in ..\Django\Django_Crash_Course\templates
+		<html>
+			<body>
+			{% if name %}
+				<h1>Hello {{name}} from dynamic home.html</h1>
+			{% else %}
+				<h1>Hello World from static home.html</h1>
+			{% endif 	%}
+			</body>
+		</html>
+	5. refresh http://127.0.0.1:9000/blog/hello/	
+		display sidepanel with History, Versions, Setting, SQL...
+
+######### Introduction to Data Modeling  (store and retrieve data)
+######### Building a Data Model
+######### Building an E-Commerce Data Model 
+	1. Collection(title, products)(1)
+	2. Product(title, description, price, inventory))(many)
+	3. Relation One-to-One, One-to-many, many-to-many
+	4. products * <--> 1 Collection(title, products)
+	5. feature_product 0..1 <--> 1 Collection(title, products)
+	6. Cart(created_at)
+	7. Product * <--> * Cart
+		CartItem(quanity)
+	8. Customer(name, email)
+	9. Order(placed_at)
+		OrderItem(quanity)
+	10. Tag(label)
+
+######### Organizing Models in Apps
+	1. 1 app: Store(Product, Collection, Tag, Cart, CartItem, Order, OrderItem, Customer)
+	2. 4 apps: 
+		Products(Product, Collection, Tag)
+		Carts(Cart, CartItem)
+		Orders(Order, OrderItem)
+		Customers(Customer)
+	3. 2 app: 
+		Store(Product, Collection, Cart, CartItem, Order, OrderItem, Customer)
+		Tags(Tag, TaggedItem)
+	4. Keys: Models in Apps
+		Minimal Coupling between Apps
+		High Cohesion in each App (Focus)
+
+################################### deploy django and database to render 
+######### configure database in render 
+0.1 https://dashboard.render.com/register
+0.2 cd C:\Users\a2907\Desktop\pyApp\DeepLearning\Django\Django_Crash_Course
+1. install python package to configure render database
+	install psycopg2-binary
+	pip install psycopg2-binary
+	# for django database connection to render external database URL
+	pip install dj-database-url
+	pip install django-environ
+	pip install gunicorn
+	pip list
+
+2. edit settings
+	sqlite_database_ID=1 
+	if sqlite_database_ID==1:
+		# sqlite database 
+		DATABASES = {
+			'default': {
+				'ENGINE': 'django.db.backends.sqlite3',
+				'NAME': BASE_DIR / 'db.sqlite3',
+			}
+		}
+		#
+		DEBUG = True
+		ALLOWED_HOSTS = []    
+	else:
+		# render PostgreSql database
+		import dj_database_url
+		DATABASES = {
+		'default': dj_database_url.parse(env('DATABASE_URL'))
+		}
+		# if not use environ, it is unsave to put database location in DATABASES
+		# 'default': dj_database_url.parse('postgres://stevegau:pCdaB...bg-a.ohio-postgres.render.com/students_0h01'
+		#
+		DEBUG = False
+		ALLOWED_HOSTS = ['*']
+		#
+		# create enviroment
+		import environ
+		env=environ.Env()
+		environ.Env.read_env()
+
+3. create .env under core folder
+	DATABASE_URL=postgres://postgres://stevegau:pCdaB...bg-a.ohio-postgres.render.com/students_0h01
+ 
+4. run manage.py runserver
+	python manage.py runserver
+		You have 20 unapplied migration(s). 
+		Your project may not work properly until you apply the migrations for app(s): 
+		admin, auth, blog, contenttypes, sessions.
+		Run 'python manage.py migrate' to apply them.
+		------> that mean connect to render postgresql database
+
+5. run manage.py migrate
+	python manage.py migrate
+		unning migrations:
+		Applying contenttypes.0001_initial... OK
+		Applying sessions.0001_initial... OK
+		------> that means migrations good
+		
+6. create a superuser for django database for render
+	1. cd C:\Users\a2907\Desktop\pyApp\DeepLearning\Django\Django_Crash_Course
+	2. python manage.py createsuperuser
+	3. Username (leave blank to use 'a2907'): admin100
+	4. Email address: a290772@gmail.com
+	5. Password: 3P$
+	6. Authenication and Authorization
+		Groups Add and Change
+		Users Add and Change
+	7. BLOG Posts Add and Change
+		
+7. login to 
+	http://127.0.0.1:8000/admin/
+
+8. create requirements.txt for githup
+	pip freeze > requirements.txt
+
+9. upload files to github
+	0. required files at folder
+		app.py
+		requirements.txt
+
+	2. Web: Creating a Git Account
+			
+	3. Web: login github
+			https://github.com/login
+			a290772@gmail.com (3P$)
+				
+	4. create a new repository
+		Under Top Repositories, Click New
+		Repository name = Render_Django_Postgresql_HTML
+		Sedcription = Render_Django_Postgresql_HTML
+		PublicAdd a README file
+		Create repository
+
+	5. Local PC:  push the code to that instance using the following commands at pycharm command window, local folder
+		cd C:\Users\a2907\Desktop\pyApp\DeepLearning\Django\Django_Crash_Course
+		git init
+		git add .
+		git commit -m "Initial Commit Render_Django_Postgresql_HTML"
+		git remote add origin https://github.com/steveGau/Render_Django_Postgresql_HTML.git
+		git push -u origin master
+
+	6. github files location:
+		files is under main/master:
+			https://github.com/steveGau/Render_Django_Postgresql_HTML/master
+
+	7. delete github Delete repository (steveGau/Render_Django_Postgresql_HTML)
+		under settings, click "Delete this repository", type"steveGau/Render_Django_Postgresql_HTML"
+
+10. deploy django to render
+	1. set start command in render
+		gunicorn core.wsgi:application
+			core.wsgi:application is from settings.py: WSGI_APPLICATION = 'core.wsgi.application'
+	2. enviroment: in render, Advanced, enviroment
+		2.1 python version:
+			PYTHON_VERSION = 3.10.6
+		2.2 set Internal Database URL
+			DATABASE_URL = postgres://stevegau:pCdaBZ1ehnzaS..x@dpg-cfc9gbun6mpiero1lsbg-a/students_0h01
+	3. Set Custom Domains Name in render

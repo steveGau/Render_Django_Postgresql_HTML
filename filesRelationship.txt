@@ -1,0 +1,238 @@
+# django relationship between setting.py, urls.py, views.py, mofels.py, admin.py apps.py with codes
+
+################## Relationship: views.py, models.py, urls.py, html, url
+# without click button
+views.def_1 --> 
+				data1=models.dbase.objects.all() --> 
+													html_var_1=data1 --> 
+																		1.html(html_var_1) --> url_1
+# with click button																		
+click.1.html.botton.View -> 
+						models.dbase.def_1(slug) -> 
+												views.def_2(slug) -> 
+																 data2=dbase.objects.get(slug=slug) -> 
+																								   html_var_2=data2 -> 
+																									               2.html(html_var_2) -> url_2 
+
+################## setting.py
+# Package Name
+ROOT_URLCONF = 'core.urls'
+# Database
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',}}
+# Main Application Name
+INSTALLED_APPS = ['blog']
+# Support Application Name
+INSTALLED_APPS = ['debug_toolbar']
+# add debug_toolbar App using MIDDLEWARE
+MIDDLEWARE = ['debug_toolbar.middleware.DebugToolbarMiddleware']
+# TEMPLATES Location
+TEMPLATES = [{'DIRS': [BASE_DIR, 'template'],},]
+# MEDIA Location
+MEDIA_URL = "/media/"
+MEDIA_ROOT = BASE_DIR / 'media'
+
+################## urls.py in package folder
+from django.contrib import admin
+from django.urls import path, include
+from django.conf.urls.static import static
+from django.conf import settings
+# Main Application path
+urlpatterns = [path('', include('blog.urls', namespace="blog"))]
+# MEDIA Location path	
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+################## apps.py
+from django.apps import AppConfig
+# create a apps name blog
+class BlogConfig(AppConfig):
+    name = 'blog'
+	
+################## urls.py in apps folder
+from django.urls import path
+from . import views
+# Main Application Name
+app_name="blog"
+# views.home location
+urlpatterns = [path('', views.home, name="homepage")]
+# views.single location
+urlpatterns = [path('single/<slug:slug>', views.single, name="single")]
+# views.aboutus location
+urlpatterns = [path('aboutus/', views.aboutus, name="aboutus")]
+
+################## models.py
+from django.db import models
+from django.urls import reverse
+# bulid a table (name=Post) [title, content, slug, image], using class, slug is url
+class Post(models.Model):
+	# [title, content, slug, image]
+    title = models.CharField(max_length=155)
+    content = models.TextField() 
+    slug = models.SlugField(max_length=255)
+    image = models.ImageField(upload_to="images/", default="images/default.png")
+	# reach blog:single
+    def get_absolute_url(self):
+        return reverse("blog:single", args=[self.slug])
+	# print title
+    def __str__(self):
+        return self.title
+
+################## admin.py
+from django.contrib import admin
+from . import models
+# register database with name=Post
+admin.site.register(models.Post)
+
+################## views.py
+from django.shortcuts import render
+from .models import Post
+# pass all data in database Post to index.html
+def home(request):
+    data = Post.objects.all()
+    return render(request, "index.html", {"posts":data})
+# pass a data record in database Post to single.html
+def single(request, slug):
+    data = Post.objects.get(slug=slug)
+    return render(request, "single.html", {"post":data})
+# pass to aboutus.html
+def aboutus(request):
+    return render(request, "aboutus.html", {})
+
+################## \media\images
+default.png
+
+################## \blog\migrations
+migrations.CreateModel(
+	name='Post',
+	fields=[
+		('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+		('title', models.CharField(max_length=155)),
+		('content', models.TextField()),
+		('slug', models.SlugField(max_length=255)),],)
+migrations.AddField(
+	model_name='post',
+	name='image',
+	field=models.ImageField(default='images/default.png', upload_to='images/'))		
+
+################## index.html
+{% extends 'base.html' %}
+{% block content %}
+	<main>
+		<section class="py-5 text-center container">
+		    ## text at top: Album example
+			<h1 class="fw-light">Album example</h1>
+			## text under top: Something ...
+			<p class="lead text-muted">Something short and leading ....</p>
+			<p>
+			  ## buttons: Mainand Secondary
+			  <a href="#" class="btn btn-primary my-2">Main call to action</a>
+			  <a href="#" class="btn btn-secondary my-2">Secondary action</a>
+			</p>
+		</section>
+	  
+		<div class="album py-5 bg-light">
+			<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+			
+				###### get posts from: views.home --> return render(request, "index.html", {"posts":data})
+				{% for post in posts %}
+					<div class="col">
+					  <div class="card shadow-sm">
+					  <img src="{{post.image.url}}" />
+						<div class="card-body">
+						  ## get post.title and list in card
+						  <p>{{post.title}}</p>
+						  ## get post.content and list in card
+						  <p class="card-text">{{post.content}}</p>
+						  <div class="d-flex justify-content-between align-items-center">
+							<div class="btn-group">
+							  ## Click button "View"					
+							  ## get data from post.get_absolute_url
+							  ## return reverse("blog:single", args=[self.slug])
+							  ## list data at single.html
+							  <a href="{{post.get_absolute_url}}" role="button" class="btn btn-primary btn-sm">View</a>
+							  ## button "Edit"
+							  <button type="button" class="btn btn-sm btn-outline-secondary">Edit</button>
+							</div>
+							<small class="text-muted">9 mins</small>
+						  </div>
+						</div>
+					  </div>
+					</div>
+				{% endfor %} 
+
+			</div>
+		</div>
+	  
+	</main>
+{% endblock content %}
+
+################## base.html
+<!doctype html>
+<html lang="en">
+
+  ################# title
+  <head>
+    ## Hello, world!
+    <title>Hello, world!</title>
+  </head>
+  
+  <body>
+  
+	################# header
+	<header>
+	  ## Hello, world!
+	  <p class="h5 my-0 me-md-auto fw-normal">Company name</p>
+	  <nav class="my-2 my-md-0 me-md-3">
+	    ## url: aboutus, Enterprise, Support, Pricing
+		<a class="p-2 text-dark" href="{% url 'blog:aboutus' %}">About us</a>
+		<a class="p-2 text-dark" href="#">Enterprise</a>
+		<a class="p-2 text-dark" href="#">Support</a>
+		<a class="p-2 text-dark" href="#">Pricing</a>
+	  </nav>
+	  ## button: Sign up
+	  <a class="btn btn-outline-primary" href="#">Sign up</a>
+	</header>
+
+	################# content
+	## call {% block content %} and {% endblock content %} in index.html
+	{% block content %}{% endblock content %}
+
+	################# footer
+	<footer class="text-muted py-5">
+	  <div class="container">
+		<p class="float-end mb-1">
+	      ## tab: Back to top
+		  <a href="#">Back to top</a>
+		</p>
+		## text 1
+		<p class="mb-1">Album example is &copy; Bootstrap, but please download and customize it for yourself!</p>
+		## text 2 and 2 links: (Visit the homepage), (getting started guide)
+		<p class="mb-0">New to Bootstrap? <a href="/">Visit the homepage</a> or read our <a href="/docs/5/">getting started guide</a>.</p>
+	  </div>
+	</footer>
+
+	################# unknown????
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/.min.js" integrity="sha384-b5k" crossorigin="anonymous">
+	</script>
+		
+  </body>
+</html>
+
+
+################## single.html
+{% extends 'base.html' %}
+{% block content %}
+	<div class="container pt-5">
+		<h1>{{post.title}}</h1>
+		<p>{{post.content}}</p>
+	</div>
+{% endblock content %}
+
+################## aboutus.html
+{% extends 'base.html' %}
+{% block content %}
+	about us
+{% endblock content %}
