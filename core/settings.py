@@ -30,21 +30,21 @@ if sqlite_database_ID==1:
     DEBUG = True
     ALLOWED_HOSTS = []    
 else:
+    #
+    # create enviroment
+    import environ
+    env = environ.Env()
+    environ.Env.read_env()
     # render PostgreSql database
     import dj_database_url
     DATABASES = {
     'default': dj_database_url.parse(env('DATABASE_URL'))
     }
     # if not use environ, it is unsave to put database location in DATABASES
-    # 'default': dj_database_url.parse('postgres://stevegau:pCdaBZ1ehnzaSkF4sQFYgPRWQSWoVl6x@dpg-cfc9gbun6mpiero1lsbg-a.ohio-postgres.render.com/students_0h01'
+    # 'default': dj_databarun manage.py runserverse_url.parse('postgres://stevegau:pCdaBZ1ehnzaSkF4sQFYgPRWQSWoVl6x@dpg-cfc9gbun6mpiero1lsbg-a.ohio-postgres.render.com/students_0h01'
     #
     DEBUG = False
     ALLOWED_HOSTS = ['*']
-    #
-    # create enviroment
-    import environ
-    env=environ.Env()
-    environ.Env.read_env()
     # 
 ############ Database
 
