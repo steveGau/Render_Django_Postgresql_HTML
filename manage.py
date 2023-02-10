@@ -16,7 +16,10 @@ def main():
             "forget to activate a virtual environment?"
         ) from exc
     execute_from_command_line(sys.argv)
-
-
+    # execute_from_command_line(['manage.py', 'runserver', '0.0.0.0:{}'.format(settings.PORT)])
+    execute_from_command_line(['manage.py', 'runserver', '0.0.0.0:10000'])
 if __name__ == '__main__':
     main()
+
+# python manage.py runserver
+# http://127.0.0.1:8000/
