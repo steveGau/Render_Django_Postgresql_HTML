@@ -380,6 +380,7 @@
 		under settings, click "Delete this repository", type"steveGau/Render_Django_Postgresql_HTML"
 
 10. deploy django to render
+	0. https://render.com/
 	1. set start command in render
 		gunicorn core.wsgi:application
 			core.wsgi:application is from settings.py: WSGI_APPLICATION = 'core.wsgi.application'
@@ -389,3 +390,4 @@
 		2.2 set Internal Database URL
 			DATABASE_URL = postgres://stevegau:pCdaBZ1ehnzaS..x@dpg-cfc9gbun6mpiero1lsbg-a/students_0h01
 	3. Set Custom Domains Name in render
+	
