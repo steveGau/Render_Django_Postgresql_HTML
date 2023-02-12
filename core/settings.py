@@ -45,7 +45,8 @@ else:
     # if not use environ, it is unsave to put database location in DATABASES
     # 'default': dj_databarun manage.py runserverse_url.parse('postgres://stevegau:pCdaBZ1ehnzaSkF4sQFYgPRWQSWoVl6x@dpg-cfc9gbun6mpiero1lsbg-a.ohio-postgres.render.com/students_0h01'
     #
-    DEBUG = False
+    # DEBUG = False
+    DEBUG = True
     ALLOWED_HOSTS = ['*']
     # 
 ############ Database
