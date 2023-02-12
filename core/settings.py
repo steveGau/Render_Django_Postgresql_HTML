@@ -17,7 +17,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 ############ Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
-sqlite_database_ID=0 
+sqlite_database_ID=0
 if sqlite_database_ID==1:
     # sqlite database 
     DATABASES = {
