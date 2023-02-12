@@ -40,6 +40,10 @@ else:
     DATABASES = {
     'default': dj_database_url.parse(os.environ.get('DATABASE_URL'))
     }
+    # ??????????
+    # postgres:     in Internal Database URL
+    # postgresql:   in value of DATABASE_URL in Environment variable.
+    # ??????????
     # dj_database_url.parse(env('DATABASE_URL')
     # os.environ.get()
     # if not use environ, it is unsave to put database location in DATABASES
